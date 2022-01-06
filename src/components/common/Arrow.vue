@@ -75,7 +75,7 @@ export default {
       <div class={'relative arrow-wrapper'} style={`width:${this.distance}px;height:${this.boxHeight * this.current.rowSpan}px`}>
         {
           new Array(this.current.next.length).fill(null).map((item, index) => {
-            const nextRowIndex = this.nextCol.findIndex(it => it.id == item.id) || 0
+            const nextRowIndex = this.nextCol.findIndex(it => it.id == this.current.next[index].id) || 0
             const rightOtherHeight = this.nextCol.reduce((pre, next, nextIndex) => {
               if (nextIndex < nextRowIndex) {
                 return pre + next.rowSpan * this.boxHeight

@@ -34,7 +34,7 @@ export default {
       cacheValue.forEach((col, colIndex) => {
         col.forEach((row, rowIndex) => {
           row.previous = colIndex ? cacheValue[colIndex - 1].filter(item => item.nextMark.includes(row.id)) : []
-          row.next = row.nextMark.length ? cacheValue[colIndex + 1].filter(item => row.nextMark.includes(item.id)) : []
+          row.next = row.nextMark.length && colIndex < cacheValue.length - 1 ? cacheValue[colIndex + 1].filter(item => row.nextMark.includes(item.id)) : []
           // const preRowSpan = row.previous.reduce((pre, next, index) => {
           //     return pre + (next.rowSpan||1)
           //   }, 0)

@@ -94,6 +94,7 @@ export default {
      */
     renderCol () {
       return this.colArr.map((col, colIndex) => {
+        console.log(this.colArr[colIndex + 1])
         return (
           <div class='flex-col'>
             {
