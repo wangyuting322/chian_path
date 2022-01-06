@@ -1,0 +1,29 @@
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
+.flex-row {
+  display: flex;
+}
+.flex-grow{
+  flex-grow: 1;
+}
+.flex-jc-between {
+  justify-content: space-between;
+}
+.flex-jc-center {
+  justify-content: center;
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+@for $i from 1 through 80 {
+  //多行文本省略号,兼容性过低慎用
+  .rowSpan#{$i} {
+    height: (50px * $i) !important;
+  }
+}
