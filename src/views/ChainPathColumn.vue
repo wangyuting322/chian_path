@@ -80,7 +80,7 @@ export default {
   },
   render (h) {
     return (
-      <div class='wrapper flex-row'>
+      <div class='wrapper flex-row chain-path-column'>
         {
           this.renderCol()
         }

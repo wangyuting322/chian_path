@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'Arrow',
+  name: 'Arrow2',
   components: {
 
   },
