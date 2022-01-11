@@ -101,11 +101,5 @@ export default {
   align-items: center;
   // margin: 20px;
 }
-.height250 {
-  height: 250px;
-}
-.width60{
-  // width: 200px;
-}
 
 </style>

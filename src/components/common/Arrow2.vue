@@ -1,4 +1,5 @@
 <script>
+// 计算高度2.0版
 export default {
   name: 'Arrow2',
   components: {
@@ -138,25 +139,7 @@ export default {
     transform: rotate(180deg) translateX(-5px);
   }
 }
-.arrow-wrapper {
-  // width:50px;
-}
 .top50{
    top: 50%;
-}
-.box {
-  width: 100px;
-  height: 50px;
-  border: 1px solid black;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  // margin: 20px;
-}
-.height250 {
-  height: 250px;
-}
-.width60 {
-  // width: 200px;
 }
 </style>

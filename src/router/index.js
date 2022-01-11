@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 const ChainPath = () => import('@/views/ChainPath.vue')
 const ChainPathColumn = () => import('@/views/ChainPathColumn.vue')
+const ChainPathColumnPlus = () => import('@/views/ChainPathColumnPlus.vue')
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,10 @@ const routes = [
     path: '/chainPathColumn',
     name: ChainPathColumn.name,
     component: ChainPathColumn
+  }, {
+    path: '/chainPathColumnPlus',
+    name: ChainPathColumnPlus.name,
+    component: ChainPathColumnPlus
   }
 ]
 
