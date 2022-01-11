@@ -1,10 +1,11 @@
 <script>
 // 组件
-import Arrow from '@/components/common/Arrow3.vue'
-import DropMenu from '@/components/common/DropMenu.vue'
+import Arrow from '@/components/service/Arrow.vue'
+import DropMenu from '@/components/service/DropMenu.vue'
 
 // 方法
 import { cloneDeep } from 'lodash'
+
 export default {
   name: 'ChainPathColumnPlus',
   components: {
@@ -13,19 +14,38 @@ export default {
   },
   data () {
     return {
+      /**
+       * 业务流图
+       */
       value: [
         [{ id: 'adapter-1', name: 'adapter01', type: 'in-adapter', nextMark: ['exchange-1'] }, { id: 'adapter-2', name: 'adapter02', type: 'in-adapter', nextMark: ['exchange-1'] }, { id: 'adapter-3', name: 'adapter03', type: 'in-adapter', nextMark: ['exchange-1'] }, { id: 'adapter-4', name: 'adapter04', type: 'in-adapter', nextMark: ['exchange-2'] }],
         [{ id: 'exchange-1', name: 'exchange1', type: 'exchange', nextMark: ['queue-1', 'queue-2', 'queue-3', 'queue-4'] }, { id: 'exchange-2', name: 'exchange2', type: 'exchange', nextMark: [] }],
         [{ id: 'queue-1', name: 'queue01', type: 'queue', nextMark: ['adapter-5'] }, { id: 'queue-2', name: 'queue02', type: 'queue', nextMark: ['adapter-5'] }, { id: 'queue-3', name: 'queue03', type: 'queue', nextMark: ['adapter-5'] }, { id: 'queue-4', name: 'queue04', type: 'queue', nextMark: [] }],
         [{ id: 'adapter-5', name: 'adapter05', type: 'out-adapter', nextMark: ['2'] }]
       ],
+      /**
+       * 当前选中的节点
+       */
       activeInfo: null,
+      /**
+       * 是否显示下拉菜单
+       */
       showDropMenu: false,
+      /**
+       * 下拉菜单的位置
+       */
       dropMenuPosition: {
         left: 0,
         top: 0
       },
-      dropMenuList: []
+      /**
+       * 下拉菜单的列表
+       */
+      dropMenuList: [],
+      /**
+       * 当前拖拽的节点
+       */
+      dragNode: null
     }
   },
   computed: {
@@ -95,6 +115,21 @@ export default {
         top: event.clientY
       }
       this.showDropMenu = true
+    },
+    /**
+     * 鼠标拖拽节点
+     */
+    handleUp (event, params) {
+      const { col, colIndex, row, rowIndex } = params
+      // 左键的鼠标松开 - 拖拽结束
+      if (event.button == 0 && this.dragNode) {
+        if (params) {
+          // 拖拽到box节点上
+
+        } else {
+          // 拖拽到空白处
+        }
+      }
     },
     /**
      * 获取新增加的节点的摆放位置 - rowIndex
@@ -249,7 +284,7 @@ export default {
                     <div class={`box pointer border-box mark${colIndex}${rowIndex} ${this.activeInfo && this.activeInfo.row.id === row.id ? 'active-box' : ''}`}
                       id={`mark${colIndex}${rowIndex}`}
                       style={`height:${height}px;margin:${this.boxMargin}px`}
-                      onContextmenu={($event) => this.onContextmenu($event, params)}>
+                      onContextmenu={($event) => this.onContextmenu($event, params)} onMouseup={($event) => this.handleUp($event, params)}>
                       {row.name}
                     </div>
                     {
@@ -270,7 +305,7 @@ export default {
   },
   render (h) {
     return (
-      <div class='wrapper flex-row chain-path-column p20' onClick={this.cancelactiveInfo} onContextmenu={($event) => this.onContextmenu($event, { row: { type: 'system' } })}>
+      <div class='wrapper flex-row chain-path-column p20' onClick={this.cancelactiveInfo} onContextmenu={($event) => this.onContextmenu($event, { row: { type: 'system' } })} onMouseup={($event) => this.handleUp($event)}>
         {
           this.renderCol()
         }
