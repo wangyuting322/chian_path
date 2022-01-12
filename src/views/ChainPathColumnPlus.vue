@@ -116,20 +116,27 @@ export default {
       }
       this.showDropMenu = true
     },
-    /**
+ /**
      * 鼠标拖拽节点
      */
-    handleUp (event, params) {
-      const { col, colIndex, row, rowIndex } = params
+    handleDrop (event, params) {
       // 左键的鼠标松开 - 拖拽结束
-      if (event.button == 0 && this.dragNode) {
+      if (this.dragNode) {
         if (params) {
+          const { col, colIndex, row, rowIndex } = params
           // 拖拽到box节点上
-
+          console.log('box', this.dragNode, event)
         } else {
           // 拖拽到空白处
+          console.log('空白', this.dragNode)
         }
       }
+    },
+    handleDragEnter (e) {
+      e.preventDefault()
+    },
+    handleDragOver (e) {
+      e.preventDefault()
     },
     /**
      * 获取新增加的节点的摆放位置 - rowIndex
@@ -284,7 +291,7 @@ export default {
                     <div class={`box pointer border-box mark${colIndex}${rowIndex} ${this.activeInfo && this.activeInfo.row.id === row.id ? 'active-box' : ''}`}
                       id={`mark${colIndex}${rowIndex}`}
                       style={`height:${height}px;margin:${this.boxMargin}px`}
-                      onContextmenu={($event) => this.onContextmenu($event, params)} onMouseup={($event) => this.handleUp($event, params)}>
+                      onContextmenu={($event) => this.onContextmenu($event, params)}  onDrop={($event) => this.handleDrop($event, params)} onDragenter={this.handleDragEnter} onDragover={this.handleDragOver}>
                       {row.name}
                     </div>
                     {
@@ -305,7 +312,7 @@ export default {
   },
   render (h) {
     return (
-      <div class='wrapper flex-row chain-path-column p20' onClick={this.cancelactiveInfo} onContextmenu={($event) => this.onContextmenu($event, { row: { type: 'system' } })} onMouseup={($event) => this.handleUp($event)}>
+      <div class='wrapper flex-row chain-path-column p20' onClick={this.cancelactiveInfo} onContextmenu={($event) => this.onContextmenu($event, { row: { type: 'system' } })}  onDrop={($event) => this.handleDrop($event)} onDragenter={this.handleDragEnter} onDragover={this.handleDragOver}>
         {
           this.renderCol()
         }
