@@ -18,10 +18,75 @@ export default {
        * 业务流图
        */
       value: [
-        [{ id: 'adapter-1', name: 'adapter01', type: 'in-adapter', nextMark: ['exchange-1'] }, { id: 'adapter-2', name: 'adapter02', type: 'in-adapter', nextMark: ['exchange-1'] }, { id: 'adapter-3', name: 'adapter03', type: 'in-adapter', nextMark: ['exchange-1'] }, { id: 'adapter-4', name: 'adapter04', type: 'in-adapter', nextMark: ['exchange-2'] }],
-        [{ id: 'exchange-1', name: 'exchange1', type: 'exchange', nextMark: ['queue-1', 'queue-2', 'queue-3', 'queue-4'] }, { id: 'exchange-2', name: 'exchange2', type: 'exchange', nextMark: [] }],
-        [{ id: 'queue-1', name: 'queue01', type: 'queue', nextMark: ['adapter-5'] }, { id: 'queue-2', name: 'queue02', type: 'queue', nextMark: ['adapter-5'] }, { id: 'queue-3', name: 'queue03', type: 'queue', nextMark: ['adapter-5'] }, { id: 'queue-4', name: 'queue04', type: 'queue', nextMark: [] }],
-        [{ id: 'adapter-5', name: 'adapter05', type: 'out-adapter', nextMark: ['2'] }]
+        [
+          {
+            id: 'adapter-1',
+            name: 'adapter01',
+            type: 'in-adapter',
+            nextMark: ['exchange-1']
+          },
+          {
+            id: 'adapter-2',
+            name: 'adapter02',
+            type: 'in-adapter',
+            nextMark: ['exchange-1']
+          },
+          {
+            id: 'adapter-3',
+            name: 'adapter03',
+            type: 'in-adapter',
+            nextMark: ['exchange-1']
+          },
+          {
+            id: 'adapter-4',
+            name: 'adapter04',
+            type: 'in-adapter',
+            nextMark: ['exchange-2']
+          }
+        ],
+        [
+          {
+            id: 'exchange-1',
+            name: 'exchange1',
+            type: 'exchange',
+            nextMark: ['queue-1', 'queue-2', 'queue-3', 'queue-4']
+          },
+          {
+            id: 'exchange-2',
+            name: 'exchange2',
+            type: 'exchange',
+            nextMark: []
+          }
+        ],
+        [
+          {
+            id: 'queue-1',
+            name: 'queue01',
+            type: 'queue',
+            nextMark: ['adapter-5']
+          },
+          {
+            id: 'queue-2',
+            name: 'queue02',
+            type: 'queue',
+            nextMark: ['adapter-5']
+          },
+          {
+            id: 'queue-3',
+            name: 'queue03',
+            type: 'queue',
+            nextMark: ['adapter-5']
+          },
+          { id: 'queue-4', name: 'queue04', type: 'queue', nextMark: [] }
+        ],
+        [
+          {
+            id: 'adapter-5',
+            name: 'adapter05',
+            type: 'out-adapter',
+            nextMark: ['2']
+          }
+        ]
       ],
       /**
        * 当前选中的节点
@@ -74,8 +139,17 @@ export default {
       const cacheValue = [...this.value]
       cacheValue.forEach((col, colIndex) => {
         col.forEach((row, rowIndex) => {
-          row.previous = colIndex ? cacheValue[colIndex - 1].filter(item => item.nextMark.includes(row.id)) : []
-          row.next = row.nextMark.length && colIndex < cacheValue.length - 1 ? cacheValue[colIndex + 1].filter(item => row.nextMark.includes(item.id)) : []
+          row.previous = colIndex
+            ? cacheValue[colIndex - 1].filter((item) =>
+              item.nextMark.includes(row.id)
+            )
+            : []
+          row.next =
+            row.nextMark.length && colIndex < cacheValue.length - 1
+              ? cacheValue[colIndex + 1].filter((item) =>
+                row.nextMark.includes(item.id)
+              )
+              : []
           // const preRowSpan = row.previous.reduce((pre, next, index) => {
           //     return pre + (next.rowSpan||1)
           //   }, 0)
@@ -93,6 +167,20 @@ export default {
   },
   methods: {
     /**
+     * 取消冒泡
+     */
+    cancelBubble (event) {
+      event.stopPropagation && event.stopPropagation()
+      event.cancelBubble = true
+    },
+    /**
+     * 取消默认事件
+     */
+    preventDefault (event) {
+      event.preventDefault && event.preventDefault()
+      event.returnValue = false
+    },
+    /**
      * 取消高亮
      */
     cancelactiveInfo (e) {
@@ -105,13 +193,16 @@ export default {
      * box右键弹出菜单
      */
     onContextmenu (event, { col, colIndex, row, rowIndex }) {
-      event.preventDefault()
+      this.preventDefault(event)
       // 不是空白处右键
       if (row.type !== 'system') {
         this.activeInfo = {
-          col, colIndex, row, rowIndex
+          col,
+          colIndex,
+          row,
+          rowIndex
         }
-        event.cancelBubble = true
+        this.cancelBubble(event)
       } else {
         this.activeInfo = null
       }
@@ -125,17 +216,41 @@ export default {
     /**
      * 鼠标拖拽节点
      */
-    handleUp (event, params) {
-      const { col, colIndex, row, rowIndex } = params
+    handleDrop (event, params) {
       // 左键的鼠标松开 - 拖拽结束
-      if (event.button == 0 && this.dragNode) {
+      if (this.dragNode) {
         if (params) {
+          const { col, colIndex, row, rowIndex } = params
           // 拖拽到box节点上
-
+          console.log('box', this.dragNode, event)
         } else {
           // 拖拽到空白处
+          console.log('空白', this.dragNode)
         }
       }
+    },
+    /**
+     * 拖拽元素进入
+     */
+    handleDragEnter (event, params = null) {
+      this.preventDefault(event)
+      this.activeInfo = params
+      if (params) {
+        this.cancelBubble(event)
+      }
+    },
+    /**
+     * 拖拽元素进入并移动
+     */
+    handleDragOver (event) {
+      this.preventDefault(event)
+    },
+    /**
+     * 拖拽元素离开
+     */
+    handleDragLeave (event) {
+      this.preventDefault(event)
+      this.activeInfo = null
     },
     /**
      * 获取新增加的节点的摆放位置 - rowIndex
@@ -146,7 +261,9 @@ export default {
         return this.value[colIndex + 1] ? this.value[colIndex + 1].length : 0
       } else {
         const current = this.value[colIndex][rowIndex]
-        const index = this.value[colIndex + 1].findIndex(it => it.id === current.nextMark[current.nextMark.length - 1])
+        const index = this.value[colIndex + 1].findIndex(
+          (it) => it.id === current.nextMark[current.nextMark.length - 1]
+        )
         if (index < 0) {
           return this.getLastNode(colIndex, rowIndex - 1)
         } else {
@@ -183,10 +300,10 @@ export default {
       this.value[colIndex].splice(rowIndex, 1)
       if (colIndex !== 0) {
         // 修改上一列中包含次节点的nextMark
-        this.value[colIndex - 1] = this.value[colIndex - 1].map(item => {
+        this.value[colIndex - 1] = this.value[colIndex - 1].map((item) => {
           // 修改current的指针，触发arrow组件的current的监听
           const cacheItem = cloneDeep(item)
-          cacheItem.nextMark = item.nextMark.filter(it => it !== row.id)
+          cacheItem.nextMark = item.nextMark.filter((it) => it !== row.id)
           return cacheItem
         })
       }
@@ -199,12 +316,22 @@ export default {
       const { col, colIndex, row, rowIndex } = this.activeInfo
       if (e === 'bindExchange' && row.type === 'in-adapter') {
         const num = Math.random()
-        this.addNode({ id: 'exchange-' + num, name: 'exchange-' + num, type: 'exchange', nextMark: [] })
+        this.addNode({
+          id: 'exchange-' + num,
+          name: 'exchange-' + num,
+          type: 'exchange',
+          nextMark: []
+        })
       } else if (e === 'cancelBind' && row.type === 'exchange') {
         this.removeNode()
       } else if (e === 'bindAdapter') {
         // 点击空白处
-        this.addNode({ id: 'adapter-' + Math.random(), name: 'adapter' + Math.random(), type: 'in-adapter', nextMark: [] })
+        this.addNode({
+          id: 'adapter-' + Math.random(),
+          name: 'adapter' + Math.random(),
+          type: 'in-adapter',
+          nextMark: []
+        })
       }
     },
     /**
@@ -263,12 +390,10 @@ export default {
       }
       // 无下一个节点时，可以解除绑定
       if (!(row.next && row.next.length) && row.type !== 'system') {
-        menu.unshift(
-          {
-            command: 'cancelBind',
-            text: '解除绑定'
-          }
-        )
+        menu.unshift({
+          command: 'cancelBind',
+          text: '解除绑定'
+        })
       }
       this.dropMenuList = menu
     },
@@ -278,40 +403,55 @@ export default {
     renderCol () {
       return this.colArr.map((col, colIndex) => {
         return (
-          <div class='flex-col' style={`padding-right:${this.distance}px`}>
-            {
-              col.map((row, rowIndex) => {
-                // 计算高度 - 减去1px高度的Drop标识
-                const height = ((this.boxHeight + 2 * this.boxMargin) * row.rowSpan) - (2 * (this.boxMargin)) - 1
-                const params = { col, colIndex, row, rowIndex }
-                return (
-                  <div class='flex-row border-box'>
-                    {/** 渲染box */}
-                    <div class={`box pointer border-box mark${colIndex}${rowIndex} ${this.activeInfo && this.activeInfo.row.id === row.id ? 'active-box' : ''}`}
-                      id={`mark${colIndex}${rowIndex}`}
-                      style={`height:${height}px;margin:${this.boxMargin}px`}
-                      onContextmenu={($event) => this.onContextmenu($event, params)} onMouseup={($event) => this.handleUp($event, params)}>
-                      {row.name}
-                    </div>
-                    {
-                      /** 渲染box右侧的箭头 */
-                      row.next && row.next.length ? (
-                        <Arrow
-                          boxHeight={this.boxHeight}
-                          boxMargin={this.boxMargin}
-                          distance={this.distance}
-                          current={row}
-                          col={col}
-                          colIndex={colIndex}
-                          rowIndex={rowIndex}
-                          nextCol={this.colArr[colIndex + 1]}></Arrow>
-                      ) : null
+          <div class="flex-col" style={`padding-right:${this.distance}px`}>
+            {col.map((row, rowIndex) => {
+              // 计算高度 - 减去1px高度的Drop标识
+              const height =
+                (this.boxHeight + 2 * this.boxMargin) * row.rowSpan -
+                2 * this.boxMargin -
+                1
+              const params = { col, colIndex, row, rowIndex }
+              return (
+                <div class="flex-row border-box">
+                  {/** 渲染box */}
+                  <div
+                    class={`box pointer border-box mark${colIndex}${rowIndex} ${
+                      this.activeInfo && this.activeInfo.row.id === row.id
+                        ? 'active-box'
+                        : ''
+                    }`}
+                    id={`mark${colIndex}${rowIndex}`}
+                    style={`height:${height}px;margin:${this.boxMargin}px`}
+                    onContextmenu={($event) =>
+                      this.onContextmenu($event, params)
                     }
-
+                    onDrop={($event) => this.handleDrop($event, params)}
+                    onDragenter={($event) =>
+                      this.handleDragEnter($event, params)
+                    }
+                    onDragover={this.handleDragOver}
+                    onDragleave={this.handleDragLeave}
+                  >
+                    {row.name}
                   </div>
-                )
-              })
-            }
+                  {
+                    /** 渲染box右侧的箭头 */
+                    row.next && row.next.length ? (
+                      <Arrow
+                        boxHeight={this.boxHeight}
+                        boxMargin={this.boxMargin}
+                        current={row}
+                        distance={this.distance}
+                        col={col}
+                        colIndex={colIndex}
+                        rowIndex={rowIndex}
+                        nextCol={this.colArr[colIndex + 1]}
+                      ></Arrow>
+                    ) : null
+                  }
+                </div>
+              )
+            })}
           </div>
         )
       })
@@ -319,11 +459,23 @@ export default {
   },
   render (h) {
     return (
-      <div class='wrapper flex-row chain-path-column p20' onClick={this.cancelactiveInfo} onContextmenu={($event) => this.onContextmenu($event, { row: { type: 'system' } })} onMouseup={($event) => this.handleUp($event)}>
-        {
-          this.renderCol()
+      <div
+        class="wrapper flex-row chain-path-column p20"
+        onClick={this.cancelactiveInfo}
+        onContextmenu={($event) =>
+          this.onContextmenu($event, { row: { type: 'system' } })
         }
-        <DropMenu v-model={this.showDropMenu} menuList={this.dropMenuList} position={this.dropMenuPosition} onCommand={this.handleCommand}></DropMenu>
+        onDrop={($event) => this.handleDrop($event)}
+        onDragenter={this.handleDragEnter}
+        onDragover={this.handleDragOver}
+      >
+        {this.renderCol()}
+        <DropMenu
+          v-model={this.showDropMenu}
+          menuList={this.dropMenuList}
+          position={this.dropMenuPosition}
+          onCommand={this.handleCommand}
+        ></DropMenu>
       </div>
     )
   }
