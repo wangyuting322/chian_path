@@ -62,6 +62,12 @@ export default {
       return 5
     },
     /**
+     * 两列之间的间隔 - 箭头的x轴间距
+     */
+    distance () {
+      return 50
+    },
+    /**
      * 每一列的数据的数组
      */
     colArr () {
@@ -272,7 +278,7 @@ export default {
     renderCol () {
       return this.colArr.map((col, colIndex) => {
         return (
-          <div class='flex-col'>
+          <div class='flex-col' style={`padding-right:${this.distance}px`}>
             {
               col.map((row, rowIndex) => {
                 // 计算高度 - 减去1px高度的Drop标识
@@ -290,7 +296,15 @@ export default {
                     {
                       /** 渲染box右侧的箭头 */
                       row.next && row.next.length ? (
-                        <Arrow boxHeight={this.boxHeight} boxMargin={this.boxMargin} current={row} col={col} colIndex={colIndex} rowIndex={rowIndex} nextCol={this.colArr[colIndex + 1]}></Arrow>
+                        <Arrow
+                          boxHeight={this.boxHeight}
+                          boxMargin={this.boxMargin}
+                          distance={this.distance}
+                          current={row}
+                          col={col}
+                          colIndex={colIndex}
+                          rowIndex={rowIndex}
+                          nextCol={this.colArr[colIndex + 1]}></Arrow>
                       ) : null
                     }
 

@@ -56,6 +56,13 @@ export default {
     nextCol: {
       type: Array,
       default: () => []
+    },
+    /**
+     * 两列之间的间隔 - 箭头的x轴间距
+     */
+    distance: {
+      type: Number,
+      default: 50
     }
   },
   data () {
@@ -64,12 +71,6 @@ export default {
     }
   },
   computed: {
-    /**
-     * 两列之间的间隔 - x
-     */
-    distance () {
-      return 50
-    },
     /**
      * 当前左侧节点的数据
      */
@@ -143,7 +144,7 @@ export default {
   render (h) {
     const height = (2 * this.boxMargin + this.boxHeight) * this.current.rowSpan
     return (
-      <div class={'relative arrow-wrapper'} style={`width:${this.distance}px;height:${height}px`}>
+      <div class={'relative arrow-wrapper'} style={`width:${0}px;height:${height}px`}>
         {
           this.cacheNext && this.cacheNext.map(item => {
             const { deg, lineLength } = item
@@ -167,6 +168,10 @@ export default {
   align-items: center;
   justify-content: end;
   transition: all 0.2s;
+    &:hover{
+    box-shadow: 0 0px 5px 3px rgba(0, 0, 0, 0.2);
+    height: 3px;
+  }
   &::before {
     content: "";
     width: 0px;
